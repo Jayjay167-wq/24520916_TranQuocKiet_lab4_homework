@@ -2,6 +2,8 @@ import { Routes, Route } from 'react-router';
 import PhotoGalleryLayout from './gallery/PhotoGalleryLayout.jsx';
 import PhotoGrid from './gallery/PhotoGrid.jsx';
 import SwipePage from './swipe/SwipePage.jsx';
+import DossierView from './tribunal/DossierView.jsx';
+import TribunalLayout, { ChooseDossier } from './tribunal/TribunalLayout.jsx';
 
 // Feature routes are added task-by-task per TASK_DECOMPOSITION.md.
 export default function App() {
@@ -13,6 +15,10 @@ export default function App() {
           <Route index element={<PhotoGrid />} />
         </Route>
         <Route path="swipe" element={<SwipePage />} />
+        <Route path="dossier" element={<TribunalLayout />}>
+          <Route index element={<ChooseDossier />} />
+          <Route path=":playerID" element={<DossierView />} />
+        </Route>
       </Routes>
     </main>
   );

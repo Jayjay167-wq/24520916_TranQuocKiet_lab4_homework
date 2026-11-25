@@ -1,0 +1,89 @@
+/* Contrast: #1f2937 on #fff 14.68:1, #4b5563 on #fff 7.56:1, #1d4ed8 on #fff 6.70:1,
+   #b91c1c on #fff 6.47:1. */
+.tribunal {
+  --tribunal-text: #1f2937;
+  --tribunal-muted: #4b5563;
+  --tribunal-link: #1d4ed8;
+  --tribunal-error: #b91c1c;
+  color: var(--tribunal-text);
+  background: #ffffff;
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+  padding: 1rem;
+}
+
+.tribunal-note {
+  color: var(--tribunal-muted);
+  font-size: 0.875rem;
+  margin-top: 0;
+}
+
+.tribunal-body {
+  display: grid;
+  grid-template-columns: minmax(10rem, 14rem) minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 40rem) {
+  .tribunal-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.tribunal-sidebar ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.25rem;
+}
+
+.tribunal-sidebar a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 0.75rem;
+  border-radius: 0.5rem;
+  color: var(--tribunal-link);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.tribunal-sidebar a.active {
+  background: var(--tribunal-link);
+  color: #ffffff;
+}
+
+.tribunal a:focus-visible,
+.tribunal button:focus-visible,
+.tribunal input:focus-visible,
+.tribunal select:focus-visible,
+.tribunal textarea:focus-visible {
+  outline: 3px solid var(--tribunal-link);
+  outline-offset: 2px;
+}
+
+.dossier h2 {
+  margin-top: 0;
+}
+
+.dossier-facts {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.25rem 1rem;
+}
+
+.dossier-facts dt {
+  font-weight: 600;
+}
+
+.dossier-facts dd {
+  margin: 0;
+}
+
+.dossier-not-found {
+  border-left: 4px solid var(--tribunal-error);
+  padding: 0.5rem 1rem;
+  background: #fef2f2;
+}

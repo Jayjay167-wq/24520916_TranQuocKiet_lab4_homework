@@ -4,9 +4,13 @@ import { currentUrl, renderApp } from '../test/renderWithRouter.jsx';
 
 const sidebar = () => screen.getByRole('navigation', { name: /dossiers/i });
 
-/** The <dd> paired with the <dt> labelled `term` inside the case-facts list. */
+// <dl> has no ARIA role, so the facts are found through their labelled region.
+const factsRegion = () => screen.getByRole('region', { name: /case facts/i });
+
+/** The <dd> paired with the <dt> labelled `term` inside the case-facts <dl>. */
 function fact(term) {
-  const list = screen.getByRole('list', { name: /case facts/i });
+  const list = factsRegion().querySelector('dl');
+  expect(list).not.toBeNull();
   const dt = within(list).getByText(term, { selector: 'dt' });
   const dd = dt.nextElementSibling;
   expect(dd?.tagName).toBe('DD');
@@ -86,7 +90,8 @@ describe('unknown player', () => {
     expect(alert).toHaveTextContent('faker');
     expect(within(alert).getByRole('link', { name: /himass/i })).toHaveAttribute('href', '/dossier/himass');
     expect(sidebar()).toBeInTheDocument();
-    expect(screen.queryByRole('list', { name: /case facts/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('region', { name: /case facts/i })).not.toBeInTheDocument();
+    expect(document.querySelector('dl')).toBeNull();
   });
 
   it('does not match on a different case', () => {
