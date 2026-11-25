@@ -29,10 +29,16 @@ export function actionFromDrag(dx, dy) {
 /**
  * @param {object} props
  * @param {readonly import('./deck.js').Profile[]} props.profiles
+ * @param {(entry: import('./deck.js').SwipeEntry) => Promise<unknown>} [props.onSwipe]
+ *   Persist a swipe. The swipe only enters history once this resolves; if it
+ *   rejects, the deck is left as it was and the error is shown.
  */
-export default function SwipeDeck({ profiles }) {
+export default function SwipeDeck({ profiles, onSwipe }) {
   const [deck, setDeck] = useState(createDeck);
   const [announcement, setAnnouncement] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState(null);
+  const savingRef = useRef(false); // sync guard: two keys can land before a re-render
   const [offset, setOffset] = useState({ dx: 0, dy: 0 });
   const dragRef = useRef(null);
   const hintId = useId();
@@ -41,14 +47,34 @@ export default function SwipeDeck({ profiles }) {
   const score = scoreOf(deck.history);
   const nameOf = (id) => profiles.find((p) => p.id === id)?.name ?? 'profile';
 
-  function handleSwipe(action) {
-    if (!current) return;
-    const next = swipe(deck, current.id, action);
+  async function handleSwipe(action) {
+    if (!current || savingRef.current) return;
+    const profile = current;
+
+    if (onSwipe) {
+      savingRef.current = true;
+      setSaving(true);
+      setSaveError(null);
+      try {
+        await onSwipe({ profileId: profile.id, action });
+      } catch (err) {
+        setSaveError(`Couldn’t save your ${NOUN[action]} on ${profile.name}: ${err.message}. Try again.`);
+        return;
+      } finally {
+        savingRef.current = false;
+        setSaving(false);
+      }
+    }
+
+    // Nothing else can change the deck while a save is in flight, so `deck` is current.
+    const next = swipe(deck, profile.id, action);
     setDeck(next);
-    setAnnouncement(`${DONE[action]} ${current.name}. Score ${scoreOf(next.history)}.`);
+    setAnnouncement(`${DONE[action]} ${profile.name}. Score ${scoreOf(next.history)}.`);
   }
 
   function handleUndo() {
+    if (savingRef.current) return;
+    setSaveError(null);
     const last = deck.history.at(-1);
     if (!last) {
       setAnnouncement('Nothing to undo.');
@@ -116,6 +142,7 @@ export default function SwipeDeck({ profiles }) {
         aria-describedby={hintId}
         aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp Backspace"
         tabIndex={0}
+        aria-busy={saving || undefined}
         data-pending={pending ?? undefined}
         style={dragging ? { transform: `translate(${offset.dx}px, ${offset.dy}px) rotate(${offset.dx / 20}deg)` } : undefined}
         onKeyDown={handleKeyDown}
@@ -142,16 +169,16 @@ export default function SwipeDeck({ profiles }) {
       </p>
 
       <div className="swipe-actions">
-        <button type="button" onClick={() => handleSwipe(ACTIONS.NOPE)} disabled={!current}>
+        <button type="button" onClick={() => handleSwipe(ACTIONS.NOPE)} disabled={!current || saving}>
           Nope
         </button>
-        <button type="button" onClick={() => handleSwipe(ACTIONS.SUPERLIKE)} disabled={!current}>
+        <button type="button" onClick={() => handleSwipe(ACTIONS.SUPERLIKE)} disabled={!current || saving}>
           Super like
         </button>
-        <button type="button" onClick={() => handleSwipe(ACTIONS.LIKE)} disabled={!current}>
+        <button type="button" onClick={() => handleSwipe(ACTIONS.LIKE)} disabled={!current || saving}>
           Like
         </button>
-        <button type="button" onClick={handleUndo} disabled={deck.history.length === 0}>
+        <button type="button" onClick={handleUndo} disabled={deck.history.length === 0 || saving}>
           Undo
         </button>
       </div>
@@ -159,6 +186,11 @@ export default function SwipeDeck({ profiles }) {
       <p className="swipe-status" role="status">
         {announcement}
       </p>
+      {saveError && (
+        <p className="swipe-error" role="alert">
+          {saveError}
+        </p>
+      )}
     </section>
   );
 }

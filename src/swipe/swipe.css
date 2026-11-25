@@ -87,3 +87,16 @@
   margin: 0;
   min-height: 1.5em;
 }
+
+.swipe-card[aria-busy='true'] {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.swipe-error {
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  border-left: 4px solid #b91c1c;
+  background: #fef2f2;
+  color: #7f1d1d;
+}

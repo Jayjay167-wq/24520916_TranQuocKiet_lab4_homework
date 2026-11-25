@@ -50,7 +50,8 @@ describe('loading profiles', () => {
 
     renderApp('/swipe');
 
-    expect(screen.getByRole('status')).toHaveTextContent(/loading profiles/i);
+    // (renderApp's location probe is an <output>, which also has role=status)
+    expect(screen.getByText(/loading profiles/i)).toHaveAttribute('role', 'status');
     expect(fetchMock).toHaveBeenCalledWith('/api/profiles', expect.objectContaining({ signal: expect.any(AbortSignal) }));
 
     pending.resolve(json(200, PROFILES));
