@@ -19,11 +19,12 @@ export default function PhotoGalleryLayout() {
             return (
               <li key={label}>
                 {/* NavLink only matches pathname, which is /gallery for every filter,
-                    so "current" is decided by the search param instead. */}
+                    so "current" is decided by the search param instead. className
+                    must be a function: a string gets NavLink's own "active" appended. */}
                 <NavLink
                   to={{ pathname: '/gallery', search: slug ? `?category=${slug}` : '' }}
                   aria-current={isSelected ? 'page' : 'false'}
-                  className={isSelected ? 'active' : undefined}
+                  className={() => (isSelected ? 'active' : undefined)}
                 >
                   {label}
                 </NavLink>

@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import Lightbox from './Lightbox.jsx';
 import { PHOTOS, toCategorySlug } from './photos.js';
@@ -22,6 +23,7 @@ function withParam(params, key, value) {
  */
 export default function PhotoGrid() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const thumbRefs = useRef(/** @type {Map<string, HTMLAnchorElement>} */ (new Map()));
 
   const category = toCategorySlug(searchParams.get('category'));
   const photos = category ? PHOTOS.filter((p) => p.category === category) : PHOTOS;
@@ -29,7 +31,13 @@ export default function PhotoGrid() {
   const photoId = searchParams.get('photoId');
   const openPhoto = PHOTOS.find((p) => p.id === photoId) ?? null;
 
-  function handleLightboxClose() {
+  /** @param {import('./photos.js').Photo | null} closed */
+  function handleLightboxClose(closed) {
+    // Return focus to the thumbnail for the photo that was showing. This also
+    // covers deep links, where no thumbnail was ever activated. If the photo is
+    // filtered out of the grid, the browser's default focus restore applies.
+    if (closed) thumbRefs.current.get(closed.id)?.focus();
+
     // The dialog also fires `close` when the URL drops photoId first
     // (e.g. browser Back); the URL is already right then.
     if (!searchParams.has('photoId')) return;
@@ -42,7 +50,13 @@ export default function PhotoGrid() {
         {photos.map((photo) => (
           <li key={photo.id}>
             <figure>
-              <Link to={{ search: `?${withParam(searchParams, 'photoId', photo.id)}` }}>
+              <Link
+                to={{ search: `?${withParam(searchParams, 'photoId', photo.id)}` }}
+                ref={(el) => {
+                  thumbRefs.current.set(photo.id, el);
+                  return () => thumbRefs.current.delete(photo.id);
+                }}
+              >
                 <img
                   src={photo.src}
                   alt={photo.alt}

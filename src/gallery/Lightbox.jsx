@@ -3,24 +3,33 @@ import { useEffect, useId, useRef } from 'react';
 /**
  * Native modal <dialog> showing one photo. Open state is driven entirely by
  * the `photo` prop; the dialog's own `close` event (Esc, Close button,
- * backdrop click) is reported through `onClose`.
+ * backdrop click, or `photo` becoming null) is reported through `onClose`
+ * together with the photo that was showing, so the caller can return focus.
  *
  * @param {{
  *   photo: import('./photos.js').Photo | null,
- *   onClose: () => void,
+ *   onClose: (closed: import('./photos.js').Photo | null) => void,
  * }} props
  */
 export default function Lightbox({ photo, onClose }) {
   const dialogRef = useRef(/** @type {HTMLDialogElement | null} */ (null));
+  const shownRef = useRef(/** @type {import('./photos.js').Photo | null} */ (null));
   const titleId = useId();
 
   // Sync with the DOM: showModal()/close() are imperative-only APIs.
   useEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;
+    if (photo) shownRef.current = photo;
     if (photo && !dialog.open) dialog.showModal();
     else if (!photo && dialog.open) dialog.close();
   }, [photo]);
+
+  function handleClose() {
+    const closed = shownRef.current;
+    shownRef.current = null;
+    onClose(closed);
+  }
 
   function handleClick(event) {
     // The body fills the dialog's box, so a click whose target is the
@@ -33,7 +42,7 @@ export default function Lightbox({ photo, onClose }) {
       ref={dialogRef}
       className="lightbox"
       aria-labelledby={photo ? titleId : undefined}
-      onClose={onClose}
+      onClose={handleClose}
       onClick={handleClick}
     >
       {photo && (

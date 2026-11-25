@@ -1,8 +1,52 @@
+/* Colour pairs (WCAG 1.4.3 / 1.4.11), computed contrast ratios:
+   --gallery-text  #1f2937 on #ffffff  14.68:1  (on hover #f3f4f6: 13.34:1)
+   --gallery-muted #4b5563 on #ffffff   7.56:1
+   --gallery-link  #1d4ed8 on #ffffff   6.70:1  (and #ffffff on it when selected)
+   focus ring      #1d4ed8 on #ffffff   6.70:1  (non-text, needs 3:1) */
+.gallery {
+  --gallery-text: #1f2937;
+  --gallery-muted: #4b5563;
+  --gallery-link: #1d4ed8;
+  color: var(--gallery-text);
+  background: #ffffff;
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+  padding: 1rem;
+}
+
+/* Visible focus for every interactive element (2.4.7). */
+.gallery a:focus-visible,
+.gallery button:focus-visible {
+  outline: 3px solid var(--gallery-link);
+  outline-offset: 2px;
+}
+
+/* Category links: targets well above the 24x24 CSS px minimum (2.5.8). */
 .gallery-categories {
   display: flex;
-  gap: 1rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
   list-style: none;
   padding: 0;
+}
+
+.gallery-categories a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 1rem;
+  border: 2px solid var(--gallery-link);
+  border-radius: 999px;
+  color: var(--gallery-link);
+  text-decoration: none;
+}
+
+/* Selected state is not colour-only (1.4.1): filled background plus bold text. */
+.gallery-categories a.active {
+  background: var(--gallery-link);
+  color: #ffffff;
+  font-weight: bold;
 }
 
 .photo-grid {
@@ -17,6 +61,11 @@
   margin: 0;
 }
 
+.photo-grid a {
+  display: block;
+  border-radius: 6px;
+}
+
 .photo-grid img {
   display: block;
   width: 100%;
@@ -24,18 +73,9 @@
   border-radius: 6px;
 }
 
-.gallery-categories a.active {
-  font-weight: bold;
-  text-decoration: underline;
-}
-
-.photo-grid a {
-  display: block;
-}
-
-.photo-grid a:focus-visible {
-  outline: 3px solid #2563eb;
-  outline-offset: 2px;
+.photo-grid figcaption {
+  color: var(--gallery-muted);
+  margin-top: 0.25rem;
 }
 
 /* No padding on the dialog: the body fills it, so any click whose target is
@@ -45,6 +85,8 @@
   border: none;
   border-radius: 8px;
   max-width: min(90vw, 900px);
+  color: var(--gallery-text);
+  background: #ffffff;
 }
 
 .lightbox::backdrop {
@@ -55,6 +97,10 @@
   padding: 1rem;
 }
 
+.lightbox-body h2 {
+  margin: 0 0 0.75rem;
+}
+
 .lightbox-body img {
   display: block;
   width: 100%;
@@ -63,4 +109,17 @@
 
 .lightbox-close {
   float: right;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 1rem;
+  border: 2px solid var(--gallery-text);
+  border-radius: 6px;
+  background: #ffffff;
+  color: var(--gallery-text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.lightbox-close:hover {
+  background: #f3f4f6;
 }
