@@ -11,7 +11,7 @@ Status: ☐ todo · ◐ in progress · ☑ done
 
 | ID | Task | Contract | Failing test (Vitest) | Commit scope | Status |
 |----|------|----------|-----------------------|--------------|--------|
-| **G1** | Gallery layout & routes | `<PhotoGalleryLayout>` at `/gallery` with nested `<Outlet />`; `<NavLink>` per category | Renders gallery heading and category links inside `MemoryRouter` | `gallery` | ☐ |
+| **G1** | Gallery layout & routes | `<PhotoGalleryLayout>` at `/gallery` with nested `<Outlet />`; `<NavLink>` per category | Renders gallery heading and category links inside `MemoryRouter` | `gallery` | ☑ |
 | **G2** | Category filter deep link | `?category=<slug>` read via `useSearchParams`; list is derived in render | `/gallery?category=evidence` shows only evidence photos; clicking a filter updates the URL | `gallery` | ☐ |
 | **G3** | `<dialog>` lightbox from URL | `?photoId=<id>` opens `<dialog>` via `showModal()`; `onClose` clears the param | `/gallery?photoId=p1` opens dialog with p1; closing removes `photoId` | `gallery` | ☐ |
 | **G4** | Lightbox a11y | Dialog has accessible name; Esc closes; focus returns to triggering thumbnail | Keyboard open/close test; `toHaveFocus()` on trigger after close | `gallery` | ☐ |

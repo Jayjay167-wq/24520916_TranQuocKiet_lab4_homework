@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300"><rect width="400" height="300" fill="#10151f"/>
+<text x="200" y="40" fill="#fff" font-family="sans-serif" font-size="22" text-anchor="middle">AZURE 13 — 7 EMBER</text>
+<g font-family="monospace" font-size="15" fill="#cbd5e1">
+<rect x="30" y="70" width="340" height="30" fill="#1e3a8a"/><text x="40" y="91">Azure_Rook    24 / 9</text>
+<rect x="30" y="110" width="340" height="30" fill="#1e3a8a"/><text x="40" y="131">Azure_Vex     18 / 11</text>
+<rect x="30" y="160" width="340" height="30" fill="#7c2d12"/><text x="40" y="181">Ember_Kite    41 / 3</text>
+<rect x="30" y="200" width="340" height="30" fill="#7c2d12"/><text x="40" y="221">Ember_Moss     6 / 20</text>
+</g>
+<ellipse cx="200" cy="175" rx="185" ry="26" fill="none" stroke="#ef4444" stroke-width="4"/>
+</svg>

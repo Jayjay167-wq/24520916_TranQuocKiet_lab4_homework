@@ -1,0 +1,25 @@
+.gallery-categories {
+  display: flex;
+  gap: 1rem;
+  list-style: none;
+  padding: 0;
+}
+
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+  list-style: none;
+  padding: 0;
+}
+
+.photo-grid figure {
+  margin: 0;
+}
+
+.photo-grid img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+}

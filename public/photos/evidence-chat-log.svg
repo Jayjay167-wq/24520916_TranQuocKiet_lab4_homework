@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300"><rect width="400" height="300" fill="#1f2937"/>
+<g font-family="monospace" font-size="14" fill="#e5e7eb">
+<text x="20" y="50">[12:01] Rook: nice round</text>
+<text x="20" y="100">[12:02] Vex: eco next?</text>
+<rect x="10" y="130" width="380" height="32" fill="#facc15"/>
+<text x="20" y="152" fill="#111827">[12:02] Kite: turn it on now</text>
+<text x="20" y="200">[12:03] Moss: ok</text>
+</g>
+</svg>
