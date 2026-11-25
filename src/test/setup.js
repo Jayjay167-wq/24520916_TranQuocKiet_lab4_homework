@@ -1,5 +1,19 @@
 import '@testing-library/jest-dom/vitest';
 
+// jsdom has no PointerEvent, so fireEvent.pointerDown() would fall back to a
+// plain Event and drop clientX/clientY. A MouseEvent subclass keeps them.
+if (typeof window !== 'undefined' && !window.PointerEvent) {
+  class PointerEvent extends MouseEvent {
+    constructor(type, init = {}) {
+      super(type, init);
+      this.pointerId = init.pointerId ?? 0;
+      this.pointerType = init.pointerType ?? 'mouse';
+      this.isPrimary = init.isPrimary ?? true;
+    }
+  }
+  window.PointerEvent = PointerEvent;
+}
+
 // jsdom has <dialog> but not showModal()/close(). This shim mirrors the browser
 // behaviour our components rely on: `open` attribute, focus moves inside,
 // Escape fires a cancelable `cancel` then closes, and close() fires `close`.
