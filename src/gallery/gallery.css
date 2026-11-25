@@ -28,3 +28,39 @@
   font-weight: bold;
   text-decoration: underline;
 }
+
+.photo-grid a {
+  display: block;
+}
+
+.photo-grid a:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 2px;
+}
+
+/* No padding on the dialog: the body fills it, so any click whose target is
+   the <dialog> element itself is a backdrop click. */
+.lightbox {
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  max-width: min(90vw, 900px);
+}
+
+.lightbox::backdrop {
+  background: rgb(0 0 0 / 0.75);
+}
+
+.lightbox-body {
+  padding: 1rem;
+}
+
+.lightbox-body img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.lightbox-close {
+  float: right;
+}
