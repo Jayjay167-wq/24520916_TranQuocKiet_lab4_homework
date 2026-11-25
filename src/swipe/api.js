@@ -32,3 +32,13 @@ export async function saveSwipe({ profileId, action }) {
   if (!res.ok) throw await errorFrom(res);
   return res.json();
 }
+
+/**
+ * Delete a saved swipe (undo). Resolves on 204, rejects otherwise.
+ * @param {import('./deck.js').SwipeEntry} entry
+ */
+export async function deleteSwipe({ swipeId }) {
+  if (!swipeId) throw new Error('This swipe has no server id');
+  const res = await fetch(`/api/swipe/${encodeURIComponent(swipeId)}`, { method: 'DELETE' });
+  if (!res.ok) throw await errorFrom(res);
+}

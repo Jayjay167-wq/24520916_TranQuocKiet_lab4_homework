@@ -12,6 +12,7 @@
  * @typedef {object} SwipeEntry
  * @property {string} profileId
  * @property {SwipeAction} action
+ * @property {string} [swipeId]  Server id, present once the swipe is saved.
  */
 
 /**
@@ -43,12 +44,14 @@ export function createDeck() {
  * @param {DeckState} deck
  * @param {string} profileId
  * @param {SwipeAction} action
+ * @param {string} [swipeId]  Server id of the saved swipe, kept for undo.
  * @returns {DeckState}
  */
-export function swipe(deck, profileId, action) {
+export function swipe(deck, profileId, action, swipeId) {
   if (!VALID_ACTIONS.has(action)) throw new TypeError(`Unknown swipe action: ${action}`);
   if (deck.history.some((entry) => entry.profileId === profileId)) return deck;
-  return { history: [...deck.history, { profileId, action }] };
+  const entry = swipeId ? { profileId, action, swipeId } : { profileId, action };
+  return { history: [...deck.history, entry] };
 }
 
 /**

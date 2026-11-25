@@ -12,6 +12,7 @@ const KEY_ACTIONS = {
 };
 
 const DONE = { LIKE: 'Liked', NOPE: 'Passed on', SUPERLIKE: 'Super liked' };
+const FAILED = Symbol('failed');
 const NOUN = { LIKE: 'like', NOPE: 'pass', SUPERLIKE: 'super like' };
 
 /**
@@ -31,9 +32,12 @@ export function actionFromDrag(dx, dy) {
  * @param {readonly import('./deck.js').Profile[]} props.profiles
  * @param {(entry: import('./deck.js').SwipeEntry) => Promise<unknown>} [props.onSwipe]
  *   Persist a swipe. The swipe only enters history once this resolves; if it
- *   rejects, the deck is left as it was and the error is shown.
+ *   rejects, the deck is left as it was and the error is shown. May resolve
+ *   to `{ id }`, which is kept on the entry for `onUndo`.
+ * @param {(entry: import('./deck.js').SwipeEntry) => Promise<unknown>} [props.onUndo]
+ *   Delete a saved swipe. The entry only leaves history once this resolves.
  */
-export default function SwipeDeck({ profiles, onSwipe }) {
+export default function SwipeDeck({ profiles, onSwipe, onUndo }) {
   const [deck, setDeck] = useState(createDeck);
   const [announcement, setAnnouncement] = useState('');
   const [saving, setSaving] = useState(false);
@@ -47,32 +51,46 @@ export default function SwipeDeck({ profiles, onSwipe }) {
   const score = scoreOf(deck.history);
   const nameOf = (id) => profiles.find((p) => p.id === id)?.name ?? 'profile';
 
+  /**
+   * Run a server call with input locked. Resolves to its result, or to
+   * `FAILED` after showing `failMessage(err)`.
+   */
+  async function persist(call, failMessage) {
+    savingRef.current = true;
+    setSaving(true);
+    setSaveError(null);
+    try {
+      return await call();
+    } catch (err) {
+      setSaveError(failMessage(err));
+      return FAILED;
+    } finally {
+      savingRef.current = false;
+      setSaving(false);
+    }
+  }
+
   async function handleSwipe(action) {
     if (!current || savingRef.current) return;
     const profile = current;
 
+    let swipeId;
     if (onSwipe) {
-      savingRef.current = true;
-      setSaving(true);
-      setSaveError(null);
-      try {
-        await onSwipe({ profileId: profile.id, action });
-      } catch (err) {
-        setSaveError(`Couldn’t save your ${NOUN[action]} on ${profile.name}: ${err.message}. Try again.`);
-        return;
-      } finally {
-        savingRef.current = false;
-        setSaving(false);
-      }
+      const saved = await persist(
+        () => onSwipe({ profileId: profile.id, action }),
+        (err) => `Couldn’t save your ${NOUN[action]} on ${profile.name}: ${err.message}. Try again.`,
+      );
+      if (saved === FAILED) return;
+      swipeId = saved?.id;
     }
 
-    // Nothing else can change the deck while a save is in flight, so `deck` is current.
-    const next = swipe(deck, profile.id, action);
+    // Nothing else can change the deck while a call is in flight, so `deck` is current.
+    const next = swipe(deck, profile.id, action, swipeId);
     setDeck(next);
     setAnnouncement(`${DONE[action]} ${profile.name}. Score ${scoreOf(next.history)}.`);
   }
 
-  function handleUndo() {
+  async function handleUndo() {
     if (savingRef.current) return;
     setSaveError(null);
     const last = deck.history.at(-1);
@@ -80,6 +98,15 @@ export default function SwipeDeck({ profiles, onSwipe }) {
       setAnnouncement('Nothing to undo.');
       return;
     }
+
+    if (onUndo) {
+      const result = await persist(
+        () => onUndo(last),
+        (err) => `Couldn’t undo your ${NOUN[last.action]} on ${nameOf(last.profileId)}: ${err.message}. Try again.`,
+      );
+      if (result === FAILED) return;
+    }
+
     const next = undo(deck);
     setDeck(next);
     setAnnouncement(`Undid ${NOUN[last.action]} on ${nameOf(last.profileId)}. Score ${scoreOf(next.history)}.`);

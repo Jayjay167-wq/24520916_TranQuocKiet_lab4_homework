@@ -1,5 +1,5 @@
 import SwipeDeck from './SwipeDeck.jsx';
-import { saveSwipe } from './api.js';
+import { deleteSwipe, saveSwipe } from './api.js';
 import { useProfiles } from './useProfiles.js';
 
 export default function SwipePage() {
@@ -17,7 +17,7 @@ export default function SwipePage() {
           </button>
         </div>
       )}
-      {status === 'ready' && <SwipeDeck profiles={profiles} onSwipe={saveSwipe} />}
+      {status === 'ready' && <SwipeDeck profiles={profiles} onSwipe={saveSwipe} onUndo={deleteSwipe} />}
     </>
   );
 }

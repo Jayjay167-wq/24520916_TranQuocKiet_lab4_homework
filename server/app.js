@@ -61,6 +61,26 @@ export function createApp({ Profile, Swipe } = models) {
     }
   });
 
+  app.delete('/api/swipe/:id', async (req, res) => {
+    const { id } = req.params;
+    if (!OBJECT_ID.test(id)) {
+      res.status(400).json({ error: 'id must be a 24-character hex ObjectId' });
+      return;
+    }
+
+    try {
+      const deleted = await Swipe.findByIdAndDelete(id);
+      if (!deleted) {
+        res.status(404).json({ error: 'Swipe not found' });
+        return;
+      }
+      res.status(204).end();
+    } catch (err) {
+      console.error('DELETE /api/swipe/:id failed:', err);
+      res.status(500).json({ error: 'Could not delete swipe' });
+    }
+  });
+
   // Malformed JSON from express.json() arrives here; answer with JSON, not HTML.
   // Express only treats a handler as an error handler when it declares 4 params.
   app.use((err, req, res, next) => {

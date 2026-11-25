@@ -207,7 +207,7 @@ describe('undo deletes the saved swipe', () => {
     expect(await screen.findByRole('group', { name: 'An, 22' })).toBeInTheDocument();
     expect(score()).toHaveTextContent('Score: 0');
     expect(deleteCalls(fetchMock)).toHaveLength(1);
-    expect(screen.getByRole('status')).toHaveTextContent('Undid like on An');
+    expect(screen.getByText(/undid like on an/i)).toHaveAttribute('role', 'status');
   });
 
   it('a failed delete shows an error and keeps the swipe', async () => {
