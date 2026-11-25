@@ -26,6 +26,15 @@ export const CATEGORIES = Object.freeze([
   { slug: 'community', label: 'Community' },
 ]);
 
+/**
+ * Narrow a raw `?category=` value to a known slug; anything else means "all".
+ * @param {string | null} value
+ * @returns {CategorySlug | null}
+ */
+export function toCategorySlug(value) {
+  return CATEGORIES.some((c) => c.slug === value) ? /** @type {CategorySlug} */ (value) : null;
+}
+
 /** @type {readonly Photo[]} */
 export const PHOTOS = Object.freeze([
   {

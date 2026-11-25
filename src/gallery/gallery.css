@@ -23,3 +23,8 @@
   height: auto;
   border-radius: 6px;
 }
+
+.gallery-categories a.active {
+  font-weight: bold;
+  text-decoration: underline;
+}
