@@ -1,5 +1,6 @@
 import { Link, useParams } from 'react-router';
 import AppealForm from './AppealForm.jsx';
+import DisproportionalityMatrix from './DisproportionalityMatrix.jsx';
 import SlaCountdown from './SlaCountdown.jsx';
 import { PLAYERS, findDossier, totalMatchesBanned } from './dossiers.js';
 
@@ -39,6 +40,7 @@ export default function DossierView() {
           <dd>{USD.format(dossier.fineUsd)}</dd>
         </dl>
       </section>
+      <DisproportionalityMatrix dossier={dossier} />
       <SlaCountdown deadline={dossier.appealDeadline} />
       <AppealForm key={dossier.id} dossier={dossier} />
     </article>

@@ -205,3 +205,53 @@
   color: var(--tribunal-error);
   font-weight: 600;
 }
+
+/* The table scrolls inside its own box on narrow screens; the page never does. */
+.matrix {
+  margin-top: 1.5rem;
+  overflow-x: auto;
+}
+
+.matrix table {
+  border-collapse: collapse;
+  min-width: 36rem;
+}
+
+.matrix caption {
+  text-align: left;
+  font-weight: 700;
+  font-size: 1.125rem;
+  padding-bottom: 0.5rem;
+}
+
+.matrix-note {
+  display: block;
+  font-weight: 400;
+  font-size: 0.875rem;
+  color: var(--tribunal-muted);
+}
+
+.matrix th,
+.matrix td {
+  border-bottom: 1px solid #d1d5db;
+  padding: 0.375rem 0.75rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.matrix th[scope='row'],
+.matrix thead th:first-child {
+  text-align: left;
+}
+
+.matrix tfoot th,
+.matrix tfoot td {
+  border-top: 2px solid var(--tribunal-text);
+  border-bottom: 0;
+  font-weight: 700;
+}
+
+/* Colour backs up the word; the verdict is always written out. */
+.matrix [data-verdict='excessive'] { color: var(--tribunal-error); font-weight: 700; }
+.matrix [data-verdict='lenient'] { color: #92400e; }
+.matrix [data-verdict='proportionate'] { color: #166534; }

@@ -33,8 +33,8 @@ describe('computeMatrix', () => {
   });
 
   it.each([
-    [4, 5, 'proportionate'], // ratio 1.25: on the upper edge, still within tolerance
-    [4, 3, 'proportionate'], // ratio 0.75: on the lower edge
+    [3, 5, 'proportionate'], // 5 / 4 = 1.25: on the upper edge, still within tolerance
+    [3, 3, 'proportionate'], // 3 / 4 = 0.75: on the lower edge
     [5, 13, 'excessive'], // 1.3
     [5, 7, 'lenient'], // 0.7
   ])('severity %i with %i matches imposed is %s (±25%% tolerance, inclusive)', (severity, imposed, verdict) => {
