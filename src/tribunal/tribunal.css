@@ -191,3 +191,17 @@
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
+
+.sla {
+  margin-top: 1.5rem;
+}
+
+.sla-remaining {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+.sla-closed {
+  color: var(--tribunal-error);
+  font-weight: 600;
+}
