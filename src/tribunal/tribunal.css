@@ -87,3 +87,107 @@
   padding: 0.5rem 1rem;
   background: #fef2f2;
 }
+
+.appeal {
+  margin-top: 2rem;
+  max-width: 36rem;
+}
+
+.appeal form {
+  display: grid;
+  gap: 1rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.field label {
+  font-weight: 600;
+}
+
+.field input,
+.field select,
+.field textarea {
+  font: inherit;
+  min-height: 44px;
+  padding: 0.5rem;
+  border: 1px solid #6b7280;
+  border-radius: 0.375rem;
+}
+
+.field[data-invalid] input,
+.field[data-invalid] select,
+.field[data-invalid] textarea {
+  border: 2px solid var(--tribunal-error);
+}
+
+.field-hint {
+  margin: 0;
+  color: var(--tribunal-muted);
+  font-size: 0.875rem;
+}
+
+.field-error {
+  margin: 0;
+  color: var(--tribunal-error);
+  font-weight: 600;
+}
+
+.appeal button[type='submit'] {
+  justify-self: start;
+  min-height: 44px;
+  padding: 0 1.25rem;
+  font: inherit;
+  font-weight: 600;
+  color: #ffffff;
+  background: var(--tribunal-link);
+  border: 0;
+  border-radius: 0.375rem;
+  cursor: pointer;
+}
+
+.error-summary {
+  border: 2px solid var(--tribunal-error);
+  border-radius: 0.375rem;
+  padding: 0.75rem 1rem;
+}
+
+.error-summary-title {
+  margin: 0 0 0.25rem;
+  font-weight: 700;
+}
+
+.error-summary ul {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.error-summary a {
+  color: var(--tribunal-error);
+}
+
+/* Never display:none here: the live region must already exist when text arrives. */
+.appeal-status {
+  margin: 0;
+  font-weight: 600;
+}
+
+.data-inspector {
+  border: 1px dashed #6b7280;
+  border-radius: 0.375rem;
+  padding: 0.5rem 1rem;
+  background: #f9fafb;
+}
+
+.data-inspector h4 {
+  margin: 0;
+}
+
+.data-inspector pre {
+  margin: 0.5rem 0 0;
+  font-size: 0.8125rem;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

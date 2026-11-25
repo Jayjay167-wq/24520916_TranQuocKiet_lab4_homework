@@ -1,4 +1,5 @@
 import { Link, useParams } from 'react-router';
+import AppealForm from './AppealForm.jsx';
 import { PLAYERS, findDossier, totalMatchesBanned } from './dossiers.js';
 
 const DATE = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
@@ -37,6 +38,7 @@ export default function DossierView() {
           <dd>{USD.format(dossier.fineUsd)}</dd>
         </dl>
       </section>
+      <AppealForm key={dossier.id} dossier={dossier} />
     </article>
   );
 }
