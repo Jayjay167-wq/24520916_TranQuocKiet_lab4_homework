@@ -1,0 +1,89 @@
+.swipe-deck {
+  max-width: 22rem;
+  margin: 1.5rem auto;
+  display: grid;
+  gap: 0.75rem;
+  font-family: system-ui, sans-serif;
+}
+
+.swipe-score {
+  margin: 0;
+  font-weight: 600;
+}
+
+.swipe-card {
+  min-height: 16rem;
+  padding: 1.5rem;
+  border: 1px solid #8a8a8a;
+  border-radius: 1rem;
+  background: #fff;
+  color: #1a1a1a;
+  box-shadow: 0 4px 16px rgb(0 0 0 / 0.12);
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  text-align: center;
+  touch-action: none; /* the drag is ours, not the browser's scroll */
+  user-select: none;
+  cursor: grab;
+  transition: transform 150ms ease-out;
+}
+
+.swipe-card[style] {
+  transition: none; /* follow the pointer exactly while dragging */
+  cursor: grabbing;
+}
+
+.swipe-card:focus-visible {
+  outline: 3px solid #1d4ed8;
+  outline-offset: 3px;
+}
+
+.swipe-card[data-pending='LIKE'] { border-color: #15803d; }
+.swipe-card[data-pending='NOPE'] { border-color: #b91c1c; }
+.swipe-card[data-pending='SUPERLIKE'] { border-color: #1d4ed8; }
+
+.swipe-avatar {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #e0e7ff;
+  color: #1e3a8a;
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.swipe-name {
+  margin: 0.75rem 0 0.25rem;
+}
+
+.swipe-bio,
+.swipe-empty {
+  margin: 0;
+}
+
+.swipe-hint {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #4b4b4b;
+}
+
+.swipe-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.swipe-actions button {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 1rem;
+  font: inherit;
+}
+
+.swipe-status {
+  margin: 0;
+  min-height: 1.5em;
+}
