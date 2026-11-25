@@ -13,6 +13,7 @@ function mockModels() {
     Profile: { find: vi.fn(() => ({ lean })) },
     Swipe: {
       create: vi.fn(async (doc) => ({ _id: 'swipe-1', ...doc, createdAt: new Date(0) })),
+      findByIdAndDelete: vi.fn(async (id) => ({ _id: id, profileId: ID, action: 'LIKE' })),
     },
   };
 }
@@ -95,6 +96,50 @@ describe('POST /api/swipe', () => {
     models.Swipe.create.mockRejectedValueOnce(new Error('disk full'));
 
     const res = await request(createApp(models)).post('/api/swipe').send({ profileId: ID, action: 'LIKE' });
+
+    expect(res.status).toBe(500);
+    expect(res.body).toEqual({ error: expect.any(String) });
+  });
+});
+
+describe('DELETE /api/swipe/:id', () => {
+  const SWIPE_ID = '665f1c2a9b3e4d5f6a7b8caa';
+
+  it('deletes the swipe and answers 204 with no body', async () => {
+    const models = mockModels();
+
+    const res = await request(createApp(models)).delete(`/api/swipe/${SWIPE_ID}`);
+
+    expect(res.status).toBe(204);
+    expect(res.text).toBe('');
+    expect(models.Swipe.findByIdAndDelete).toHaveBeenCalledWith(SWIPE_ID);
+  });
+
+  it('answers 400 with { error } for a malformed id and deletes nothing', async () => {
+    const models = mockModels();
+
+    const res = await request(createApp(models)).delete('/api/swipe/not-an-id');
+
+    expect(res.status).toBe(400);
+    expect(res.body).toEqual({ error: expect.any(String) });
+    expect(models.Swipe.findByIdAndDelete).not.toHaveBeenCalled();
+  });
+
+  it('answers 404 with { error } when no swipe has that id', async () => {
+    const models = mockModels();
+    models.Swipe.findByIdAndDelete.mockResolvedValueOnce(null);
+
+    const res = await request(createApp(models)).delete(`/api/swipe/${SWIPE_ID}`);
+
+    expect(res.status).toBe(404);
+    expect(res.body).toEqual({ error: expect.any(String) });
+  });
+
+  it('answers 500 with { error } when the delete fails', async () => {
+    const models = mockModels();
+    models.Swipe.findByIdAndDelete.mockRejectedValueOnce(new Error('disk full'));
+
+    const res = await request(createApp(models)).delete(`/api/swipe/${SWIPE_ID}`);
 
     expect(res.status).toBe(500);
     expect(res.body).toEqual({ error: expect.any(String) });

@@ -35,7 +35,9 @@ function stubFetch(handlers) {
   return fetchMock;
 }
 
-const postCalls = (fetchMock) => fetchMock.mock.calls.filter(([, init]) => init?.method === 'POST');
+const callsWith = (method) => (fetchMock) => fetchMock.mock.calls.filter(([, init]) => init?.method === method);
+const postCalls = callsWith('POST');
+const deleteCalls = callsWith('DELETE');
 const card = (name) => screen.getByRole('group', { name });
 const score = () => screen.getByText(/^score:/i);
 
@@ -177,5 +179,59 @@ describe('saving swipes', () => {
     pending.resolve(json(201, {}));
     await waitFor(() => expect(score()).toHaveTextContent('Score: 10'));
     expect(card('Bình, 24')).toBeInTheDocument();
+  });
+});
+
+describe('undo deletes the saved swipe', () => {
+  const SWIPE_ID = '665f1c2a9b3e4d5f6a7b8caa';
+
+  async function likedFirst(deleteHandler) {
+    const user = userEvent.setup();
+    const fetchMock = stubFetch({
+      'GET /api/profiles': () => json(200, PROFILES),
+      'POST /api/swipe': (init) => json(201, { id: SWIPE_ID, ...JSON.parse(init.body) }),
+      [`DELETE /api/swipe/${SWIPE_ID}`]: deleteHandler,
+    });
+    renderApp('/swipe');
+    (await screen.findByRole('group', { name: 'An, 22' })).focus();
+    await user.keyboard('{ArrowRight}');
+    await screen.findByRole('group', { name: 'Bình, 24' });
+    return { user, fetchMock };
+  }
+
+  it('sends DELETE /api/swipe/:id with the id from the POST, then pops history', async () => {
+    const { user, fetchMock } = await likedFirst(() => ({ ok: true, status: 204, json: async () => null }));
+
+    await user.keyboard('{Backspace}');
+
+    expect(await screen.findByRole('group', { name: 'An, 22' })).toBeInTheDocument();
+    expect(score()).toHaveTextContent('Score: 0');
+    expect(deleteCalls(fetchMock)).toHaveLength(1);
+    expect(screen.getByRole('status')).toHaveTextContent('Undid like on An');
+  });
+
+  it('a failed delete shows an error and keeps the swipe', async () => {
+    const { user } = await likedFirst(() => json(500, { error: 'Could not delete swipe' }));
+
+    await user.keyboard('{Backspace}');
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(/couldn.t undo.*An/i);
+    expect(card('Bình, 24')).toBeInTheDocument();
+    expect(score()).toHaveTextContent('Score: 10');
+  });
+
+  it('ignores swipes and a second undo while the delete is in flight', async () => {
+    const pending = deferred();
+    const { user, fetchMock } = await likedFirst(() => pending.promise);
+
+    await user.keyboard('{Backspace}');
+    expect(card('Bình, 24')).toHaveAttribute('aria-busy', 'true');
+    await user.keyboard('{Backspace}{ArrowLeft}');
+
+    expect(deleteCalls(fetchMock)).toHaveLength(1);
+    expect(postCalls(fetchMock)).toHaveLength(1);
+
+    pending.resolve({ ok: true, status: 204, json: async () => null });
+    expect(await screen.findByRole('group', { name: 'An, 22' })).toBeInTheDocument();
   });
 });

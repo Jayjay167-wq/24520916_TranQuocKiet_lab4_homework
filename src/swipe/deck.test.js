@@ -54,6 +54,12 @@ describe('swipe history', () => {
     expect(swipe(once, 'a', ACTIONS.NOPE)).toBe(once);
   });
 
+  it('keeps the server id of a saved swipe so undo can delete it', () => {
+    const deck = swipe(createDeck(), 'a', ACTIONS.LIKE, 'swipe-1');
+
+    expect(deck.history).toEqual([{ profileId: 'a', action: 'LIKE', swipeId: 'swipe-1' }]);
+  });
+
   it('rejects an unknown action', () => {
     expect(() => swipe(createDeck(), 'a', 'MAYBE')).toThrow(/action/i);
   });
